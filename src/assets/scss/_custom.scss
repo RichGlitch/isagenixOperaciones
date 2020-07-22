@@ -1,0 +1,40 @@
+// In this scss you can overwrite all our scss, we suggested you to add your scss into this, so whenever the update comes it will not affect your code.
+
+.menu-container-ul{
+    height: 100%;
+    display: flex;
+    flex-flow: column;
+    justify-content: space-between;
+}
+
+.profile-flex-container{
+    display: flex;
+    flex-flow: column wrap;
+    justify-content: stretch;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+    margin-top: 10px;
+}
+
+.sidebar-nav .user-profile > img {
+    width: 80%;
+    border-radius: 100%;
+    margin-bottom: 10px;
+}
+
+.strongText{
+    font-weight: 700;
+    font-size: 1.3em;
+}
+
+.user-profile-data{
+    font-size: 12px;
+    margin-bottom: 30px;
+    font-weight: 300;
+    display: flex;
+    flex-flow: column wrap;
+    justify-content: center;
+    align-items: center;
+  
+  }
