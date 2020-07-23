@@ -30,7 +30,9 @@ export const ComponentsRoutes: Routes = [
 					urls: [
 						{ title: 'Dashboard', url: '/dashboard' },
 						{ title: 'ngComponent' },
-						{ title: 'Progressbar' }
+						{ title: 'Progressbar' },
+						{ title: 'Perro' }
+
 					]
 				}
 			},

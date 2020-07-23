@@ -1,0 +1,7 @@
+export class UserModel{
+    id?:string;
+    email?: string;
+    password?: string;
+    displayName?: string;
+    photoURL?: string;
+}

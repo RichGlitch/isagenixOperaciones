@@ -3,6 +3,7 @@ import { ROUTES } from './menu-items';
 import { RouteInfo } from './sidebar.metadata';
 import { Router, ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { AuthFirebaseService } from 'src/app/providers/auth/auth-firebase.service';
 declare var $: any;
 
 @Component({
@@ -38,11 +39,17 @@ export class SidebarComponent implements OnInit {
   constructor(
     private modalService: NgbModal,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private auth: AuthFirebaseService
   ) {}
 
   // End open close
   ngOnInit() {
     this.sidebarnavItems = ROUTES.filter(sidebarnavItem => sidebarnavItem);
+  }
+
+  onLogOut(){
+    this.auth.signOut();
+    this.router.navigate(['login']);
   }
 }

@@ -3,48 +3,87 @@
         <div>
             <div class="logo">
                 <span class="db"><img src="assets/images/logo-icon.png" alt="logo" /></span>
-                <h5 class="font-medium m-b-20">Sign Up to Admin</h5>
+                <h5 class="font-medium m-b-20">Registrarse</h5>
             </div>
             <!-- Form -->
             <div class="row">
                 <div class="col-12">
-                    <form class="form-horizontal m-t-20" action="index.html">
+                    
+                    <form class="form-horizontal m-t-20" [formGroup]="signup" (ngSubmit)="onsignup()">
+                        
                         <div class="form-group row ">
                             <div class="col-12 ">
-                                <input class="form-control" type="text" required=" " placeholder="Name">
+                                <input class="form-control" type="text" formControlName="name" placeholder="Nombre Completo" [class.is-invalid]="invalidName">
+                                <small *ngIf="invalidName" class="text-danger">Longitud mínima de 7 caracteres</small>
                             </div>
                         </div>
                         <div class="form-group row">
                             <div class="col-12 ">
-                                <input class="form-control" type="text" required=" " placeholder="Email">
+                                <input class="form-control" type="text" formControlName="email" placeholder="Email" [class.is-invalid]="invalidEmail">
+                                <small *ngIf="invalidEmail" class="text-danger">Ingresa una dirección válida</small>
+
                             </div>
                         </div>
-                        <div class="form-group row">
-                            <div class="col-12 ">
-                                <input class="form-control" type="password" required=" " placeholder="Password">
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <div class="col-12 ">
-                                <input class="form-control" type="password" required=" " placeholder="Confirm Password">
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <div class="col-md-12 ">
-                                <div class="custom-control custom-checkbox">
-                                    <input type="checkbox" class="custom-control-input" id="customCheck1">
-                                    <label class="custom-control-label" for="customCheck1">I agree to all <a href="javascript:void(0)">Terms</a></label>
+                        <div formGroupName="passwordGroup">
+                            <div class="form-group row">
+                                <div class="col-12 ">
+                                    <input class="form-control" type="password" formControlName="password" placeholder="Contraseña" [ngClass]="{'is-invalid':signup.get('passwordGroup').errors || 
+                                                                                                                                                ((signup.get('passwordGroup.password').touched ||
+                                                                                                                                                signup.get('passwordGroup.password').dirty) &&
+                                                                                                                                                !signup.get('passwordGroup.password').valid
+                                                                                                                                                )}">
                                 </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-12 ">
+                                    <input class="form-control" type="password" formControlName="confirmPassword" placeholder="Confirma Contraseña"  [ngClass]="{'is-invalid':signup.get('passwordGroup').errors || 
+                                                                                                                                                ((signup.get('passwordGroup.confirmPassword').touched ||
+                                                                                                                                                signup.get('passwordGroup.confirmPassword').dirty) &&
+                                                                                                                                                !signup.get('passwordGroup.confirmPassword').valid
+                                                                                                                                                )}">
+                                </div>
+                            </div>
+                            
+                            <small *ngIf="signup.get('passwordGroup').errors?.match" class="text-danger">
+                                Las contraseñas no coinciden.
+                            </small>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-12 ">
+                                <div>
+                                    <div class="form-check form-check-inline">
+                                        <label class="form-check-label">
+                                            <input class="form-check-input"
+                                                    type="radio"
+                                                    value="colaborador"
+                                                    formControlName="userRole"> Colaborador
+                                        </label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <label class="form-check-label">
+                                            <input class="form-check-input"
+                                                    type="radio"
+                                                    value="coordinador"
+                                                    formControlName="userRole"> Coordinador
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div *ngIf="isCoordinador" class="form-group row animated fadeInDown">
+                            <div class="col-12 ">
+                                <input class="form-control" type="text" formControlName="specialCode" placeholder="Código de coordinador" [class.is-invalid]="invalidSpecialCode">
+                                <small *ngIf="invalidSpecialCode" class="text-danger">Se requiere el código de coordinador</small>
                             </div>
                         </div>
                         <div class="form-group text-center ">
                             <div class="col-xs-12 p-b-20 ">
-                                <a class="btn btn-block btn-lg btn-info" href="/dashboard/dashboard1">SIGN UP</a>
+                                <button class="btn btn-block btn-lg btn-info" type="submit">Registrarme</button>
                             </div>
                         </div>
                         <div class="form-group m-b-0 m-t-10 ">
                             <div class="col-sm-12 text-center ">
-                                Already have an account? <a href="/authentication/login2" class="text-info m-l-5 "><b>Sign In</b></a>
+                                ¿Ya tienes una cuenta? <a routerLink="/login" class="text-info m-l-5 "><b>Ingresar</b></a>
                             </div>
                         </div>
                     </form>

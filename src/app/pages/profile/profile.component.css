@@ -1,0 +1,25 @@
+.label{
+    display: inline-block;
+    vertical-align: top;
+    overflow: hidden;
+    position: relative;
+    margin: 20px;
+    text-align: center;
+}
+.label > i{
+    position: absolute;
+    padding-top: 100px;
+    border-radius: 100%;
+    width: 250px;
+    height: 250px;
+    background-color: rgba(43, 80, 95, 0.37);
+    color:white;
+    transition:all 0.5s ease;
+    font-size: 5em;
+    opacity: 0;
+} 
+
+.label > i:hover{
+   opacity: 1;
+   cursor: pointer;
+}

@@ -11,15 +11,11 @@ export const Approutes: Routes = [
     path: '',
     component: FullComponent,
     children: [
-      { path: '', redirectTo: '/home/reports', pathMatch: 'full' },
+      { path: '', redirectTo: '/home', pathMatch: 'full' },
       
       {
-        path: 'starter',
-        loadChildren: () => import('./starter/starter.module').then(m => m.StarterModule)
-      },
-      {
         path: 'home',
-        loadChildren: () => import('./pages/pages.module').then(m => m.PagesModule)
+        loadChildren: () => import('./starter/starter.module').then(m => m.StarterModule)
       },
       {
         path: 'component',
@@ -31,6 +27,6 @@ export const Approutes: Routes = [
   { path: 'signup', component:SignupComponent},
   {
     path: '**',
-    redirectTo: '/home/reports'
+    redirectTo: '/home'
   }
 ];

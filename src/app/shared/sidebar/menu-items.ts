@@ -18,6 +18,14 @@ export const ROUTES: RouteInfo[] = [
     submenu: []
   },
   {
+    path: '/home/colaboradores',
+    title: 'Colaboradores',
+    icon: 'mdi mdi-gauge',
+    class: '',
+    extralink: false,
+    submenu: []
+  },
+  {
       path: '',
       title: 'UI Elements',
       icon: 'mdi mdi-chart-bubble',

@@ -1,8 +1,8 @@
 import { Component, OnInit, Directive, EventEmitter, Input, Output, QueryList, ViewChildren } from '@angular/core';
-import { EmployeesService } from './employees.service';
+import { TableService } from './ngtable.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { Employee } from 'src/app/models/employee.model';
+import { Table } from './ngtable';
 
 
 export type SortDirection = 'asc' | 'desc' | '';
@@ -35,35 +35,39 @@ export class NgbdSortableHeader {
   }
 }
 
-
 @Component({
-  selector: 'app-employees',
-  templateUrl: './employees.component.html',
-  styleUrls: ['./employees.component.css']
+  selector: 'app-ngtable',
+  templateUrl: './ngtable.component.html',
+  styleUrls: ['./ngtable.component.scss']
 })
-export class EmployeesComponent implements OnInit {
-  
+export class TableComponent implements OnInit {
+
   clientList = this.tableService.getTable();
-  sortClientList:Employee[]|null=null;
-  filterClient:Employee[]|null=null;
-  cfilterClient:Employee[]|null=null;
+  sortClientList:Table[]|null=null;
+  filterClient:Table[]|null=null;
+  cfilterClient:Table[]|null=null;
   page = 1;
   pageSize = 2;
   editClient: FormGroup=Object.create(null);
   editAddLabel: string = 'Edit';
-  clientDetail: Employee |null=null;
+  clientDetail: Table |null=null;
   totalLengthOfCollection: number=0;
 
+  //Sorting purpose...
   @ViewChildren(NgbdSortableHeader) headers: QueryList<NgbdSortableHeader>=Object.create(null);
+
   
-  constructor(private tableService: EmployeesService, private fb: FormBuilder, private modalService: NgbModal) {
+  
+
+
+  constructor(private tableService: TableService, private fb: FormBuilder, private modalService: NgbModal) {
     this.filterClient = this.clientList;
     this.cfilterClient = this.clientList;
     this.sortClientList = this.clientList;
     this.totalLengthOfCollection = this.cfilterClient.length;
   }
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.editClient = this.fb.group({
       fullName: ['', Validators.required],
       UserName: ['', Validators.required],
@@ -109,7 +113,7 @@ export class EmployeesComponent implements OnInit {
 
   filter(v: string) {
     return this.tableService.getTable().filter(x => x.Name?.toLowerCase().indexOf(v.toLowerCase()) !== -1 ||
-      x.Name?.toLowerCase().indexOf(v.toLowerCase()) !== -1 || x.Email?.toLowerCase().indexOf(v.toLowerCase()) !== -1);
+      x.UserName?.toLowerCase().indexOf(v.toLowerCase()) !== -1 || x.Email?.toLowerCase().indexOf(v.toLowerCase()) !== -1);
   }
 
   
@@ -131,7 +135,7 @@ export class EmployeesComponent implements OnInit {
 
   cfilter(v: string) {
     return this.tableService.getTable().filter(x => x.Name?.toLowerCase().indexOf(v.toLowerCase()) !== -1 ||
-      x.Name?.toLowerCase().indexOf(v.toLowerCase()) !== -1 || x.Email?.toLowerCase().indexOf(v.toLowerCase()) !== -1);
+      x.UserName?.toLowerCase().indexOf(v.toLowerCase()) !== -1 || x.Email?.toLowerCase().indexOf(v.toLowerCase()) !== -1);
 
   }
 
@@ -210,7 +214,7 @@ export class EmployeesComponent implements OnInit {
       const index = this.tableService.getTable().indexOf(this.clientDetail);
 
       this.clientDetail.Name = this.editClient?.get('fullName')?.value;
-      this.clientDetail.Position = this.editClient?.get('position')?.value;
+      this.clientDetail.UserName = this.editClient?.get('UserName')?.value;
       this.clientDetail.Email = this.editClient?.get('email')?.value;
 
 
@@ -218,12 +222,12 @@ export class EmployeesComponent implements OnInit {
     }
     else {
 
-      this.clientDetail = new Employee();
+      this.clientDetail = new Table();
 
       this.clientDetail.Id = Math.max.apply(Math, this.tableService.getTable().map(function (o) { return o.Id; })) + 1;
 
       this.clientDetail.Name = this.editClient?.get('fullName')?.value;
-      this.clientDetail.Position = this.editClient?.get('position')?.value;
+      this.clientDetail.UserName = this.editClient?.get('UserName')?.value;
       this.clientDetail.Email = this.editClient?.get('email')?.value;
       this.clientDetail.imagePath = 'assets/image/3.jpg';
 
@@ -235,5 +239,7 @@ export class EmployeesComponent implements OnInit {
     this.clientDetail = null;
     this.ngOnInit();
   }
+
+
 
 }

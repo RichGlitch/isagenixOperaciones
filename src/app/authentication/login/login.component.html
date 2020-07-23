@@ -8,23 +8,23 @@
             <!-- Form -->
             <div class="row">
                 <div class="col-12">
-                    <form class="form-horizontal m-t-20" id="loginform">
+                    <form class="form-horizontal m-t-20" [formGroup]="login" (ngSubmit)="onlogin()">
                         <div class="input-group mb-3">
                             <div class="input-group-prepend">
                                 <span class="input-group-text" id="basic-addon1"><i class="ti-user"></i></span>
                             </div>
-                            <input type="text" class="form-control" placeholder="Email" aria-label="Email" aria-describedby="basic-addon1">
+                            <input type="text" class="form-control" placeholder="Email" aria-label="Email" aria-describedby="basic-addon1" formControlName="email" [class.is-invalid]="invalidEmail">
                         </div>
                         <div class="input-group mb-3">
                             <div class="input-group-prepend">
                                 <span class="input-group-text" id="basic-addon2"><i class="ti-lock"></i></span>
                             </div>
-                            <input type="text" class="form-control" placeholder="Contraseña" aria-label="Password" aria-describedby="basic-addon1">
+                            <input type="password" class="form-control" placeholder="Contraseña" aria-label="Password" aria-describedby="basic-addon1" formControlName="password" [class.is-invalid]="invalidPassword">
                         </div>
                         <div class="form-group row">
                             <div class="col-md-12">
                                 <div class="custom-control custom-checkbox d-flex">
-                                    <input type="checkbox" class="custom-control-input" id="customCheck1">
+                                    <input type="checkbox" class="custom-control-input" id="customCheck1" formControlName="rememberMe">
                                     <label class="custom-control-label font-14" for="customCheck1">Recordar</label>
                                     <a (click)="showRecoverForm()" href="javascript:void(0)" id="to-recover" class="text-dark ml-auto font-14"><i class="fa fa-lock m-r-5"></i> ¿Olvidó su contraseña? </a>
                                 </div>
@@ -32,7 +32,7 @@
                         </div>
                         <div class="form-group text-center">
                             <div class="col-xs-12 p-b-20">
-                                <a class="btn btn-block btn-lg btn-info" routerLink="/home/reports">Ingresar</a>
+                                <button class="btn btn-block btn-lg btn-info" type="submit">Ingresar</button>
                             </div>
                         </div>
                         <div class="form-group m-b-0 m-t-10">
