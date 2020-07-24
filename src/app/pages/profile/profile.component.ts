@@ -5,6 +5,7 @@ import { UserModel } from '../../models/user.model';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { AngularFireStorage } from '@angular/fire/storage'
 import { FileModel } from '../../models/file.model';
+import Swal from 'sweetalert2';
  
 @Component({
   selector: 'app-profile',
@@ -20,7 +21,7 @@ export class ProfileComponent implements OnInit {
       email:'',
       photoURL:''
     };
-    public currentImage= '';
+    public currentImage= 'https://api.adorable.io/avatars/285/newUser.png';
     image: FileModel;
     
     profileForm: FormGroup;
@@ -40,14 +41,9 @@ export class ProfileComponent implements OnInit {
     }
 
     private initFormValues(user:UserModel):void{
-      console.log('usuario descargado ' + user);
-      console.log( user);
-
+    
       if(user.photoURL){
         this.currentImage = user.photoURL;
-      }
-      else{
-        this.currentImage='https://api.adorable.io/avatars/285/' + user.email + '.png';
       }
       this.user = user;
       this.profileForm.patchValue({
@@ -57,9 +53,16 @@ export class ProfileComponent implements OnInit {
     }
 
     onSaveUser(){
+      Swal.fire({
+        allowOutsideClick: false,
+        icon:'success',
+        text:'Perfil Actualizado con Éxito',
+        showConfirmButton: true,
+      });
+      
       this.user = this.profileForm.value;
-      console.log(this.profileForm.value);
       this.auth.saveProfile(this.user,this.image);
+      
     }
 
     handleImage(e){
@@ -70,8 +73,6 @@ export class ProfileComponent implements OnInit {
           this.currentImage=event.target.result;
         }
         this.image = e.target.files[0];
-        console.log('imagen ' + this.image);
-        console.log('imagen path ' + this.currentImage);
       }
       //this.image = image;
       

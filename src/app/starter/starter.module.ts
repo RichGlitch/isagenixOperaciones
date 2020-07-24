@@ -12,10 +12,13 @@ import { TableService } from '../pages/ngtable/ngtable.service';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { ProfileComponent } from '../pages/profile/profile.component';
+import { AuthGuard } from '../authentication/guards/auth.guard';
+import { NotFoundComponent } from '../shared/not-found/not-found.component';
 
 const routes: Routes = [
+  { path: '', redirectTo: 'reportes', pathMatch: 'full' },
   {
-    path: '',
+    path: 'reportes',
     data: {
       title: 'Reportes',
       urls: [
@@ -23,6 +26,7 @@ const routes: Routes = [
         { title: 'Reportes' }
       ]
     },
+   // canActivate:[AuthGuard],
     component: ReportsComponent
   },
   {
@@ -46,6 +50,9 @@ const routes: Routes = [
       ]
     },
     component: ProfileComponent
+  },
+  {
+    path:'notFound',component:NotFoundComponent
   }
 ];
 

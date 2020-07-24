@@ -2,9 +2,9 @@
   <div class="menu-container-ul">
     <ul id="sidebarnav" >
         <li class="user-profile profile-flex-container">
-            <img  src="https://randomuser.me/api/portraits/med/men/14.jpg" alt="user" />
+            <img  src="{{avatar$ | async}}" alt="user" />
             <!-- <a routerLinkActive="active" routerLink="/account-settings"><i class="mdi mdi-account-edit"></i></a> -->
-            <span class=" strongText">Fernando Gutierrez </span>
+            <span class=" strongText">{{user.displayName?user.displayName:'Usuario Nuevo'}}</span>
          
             <div class="user-profile-data ">
               <span class="font-weight-bold">Supervisor de Ventas</span>

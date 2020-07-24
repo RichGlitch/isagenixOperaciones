@@ -4,6 +4,9 @@ import { RouteInfo } from './sidebar.metadata';
 import { Router, ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AuthFirebaseService } from 'src/app/providers/auth/auth-firebase.service';
+import { UserModel } from '../../models/user.model';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+
 declare var $: any;
 
 @Component({
@@ -13,6 +16,10 @@ declare var $: any;
 export class SidebarComponent implements OnInit {
   showMenu = '';
   showSubMenu = '';
+  currentPhoto = 'https://api.adorable.io/avatars/285/newUser.png';
+  avatar$:any;
+
+  user:UserModel={};
   public sidebarnavItems: any[];
   // this is for the open close
   addExpandClass(element: any) {
@@ -39,13 +46,21 @@ export class SidebarComponent implements OnInit {
   constructor(
     private modalService: NgbModal,
     private router: Router,
-    private route: ActivatedRoute,
-    private auth: AuthFirebaseService
+    private auth: AuthFirebaseService,
+    private route: ActivatedRoute
   ) {}
 
   // End open close
   ngOnInit() {
     this.sidebarnavItems = ROUTES.filter(sidebarnavItem => sidebarnavItem);
+    this.avatar$ =this.auth.getAvatar();
+    this.auth.user.subscribe( user =>{
+      this.user = user;
+      if(this.user.photoURL)
+        this.currentPhoto = this.user.photoURL;
+      
+        this.auth.setAvatar(this.currentPhoto);
+    });
   }
 
   onLogOut(){

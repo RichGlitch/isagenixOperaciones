@@ -6,6 +6,7 @@ import { AngularFireAuth } from '@angular/fire/auth';
 import { UserModel } from '../../models/user.model';
 import { FileModel } from '../../models/file.model';
 import { AngularFireStorage } from '@angular/fire/storage';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
 @Injectable({
   providedIn: 'root'
@@ -13,9 +14,11 @@ import { AngularFireStorage } from '@angular/fire/storage';
 export class AuthFirebaseService {
   public user: Observable<firebase.User | null >;
   private filePath: string;
-  
+  avatar$:BehaviorSubject<any>;
+
   constructor(private afAuth: AngularFireAuth, private storage: AngularFireStorage) {
     this.user = this.afAuth.authState;
+    this.avatar$ = new BehaviorSubject(null);
   }
   
   // Obtener el estado de autenticación
@@ -23,6 +26,15 @@ export class AuthFirebaseService {
     return this.user != null; // True ó False
   }
   
+  getAvatar() {
+    return this.avatar$.asObservable();
+  }
+  
+  
+  setAvatar(value: any) {
+    this.avatar$.next(value);
+  }
+
   // Obtener el observador del usuario actual
   get currentUser(): Observable<firebase.User | null> {
     return this.user;
@@ -64,21 +76,23 @@ export class AuthFirebaseService {
   }
   
   uploadImage(user: UserModel, image: FileModel) {
-    console.log('uploading image.name '+ image.name);
-    this.filePath = `images/${image.name}`;
-    const fileRef = this.storage.ref(this.filePath);
-    const task = this.storage.upload(this.filePath,image);
-    task.snapshotChanges()
-    .pipe(
-      finalize (()=>{
-        fileRef.getDownloadURL().subscribe( urlImage => {
-          console.log('urlimage '+ urlImage);
-          console.log('user.photoUrl '+ user.photoURL);
-          user.photoURL = urlImage;
-          this.updateUser(user);
+    if(image){
+      this.filePath = `images/${image.name}`;
+      const fileRef = this.storage.ref(this.filePath);
+      const task = this.storage.upload(this.filePath,image);
+      task.snapshotChanges()
+      .pipe(
+        finalize (()=>{
+          fileRef.getDownloadURL().subscribe( urlImage => {
+            user.photoURL = urlImage;
+            this.setAvatar(urlImage);
+            this.updateUser(user);
+          })
         })
-      })
-    ).subscribe();
+      ).subscribe();
+    }
+    else 
+      this.updateUser(user);
   }
 
   updateUser(user: UserModel){
