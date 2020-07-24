@@ -55,11 +55,30 @@ export class SidebarComponent implements OnInit {
     this.sidebarnavItems = ROUTES.filter(sidebarnavItem => sidebarnavItem);
     this.avatar$ =this.auth.getAvatar();
     this.auth.user.subscribe( user =>{
-      this.user = user;
-      if(this.user.photoURL)
-        this.currentPhoto = this.user.photoURL;
+      this.user = {
+        displayName:user.displayName,
+        email:user.email,
+        photoURL:user.photoURL,
+        id:user.uid
+      };
+      
+      console.log('this.user ');
+      console.log(this.user);
+  
+        this.auth.getUserRolAndPosition(user.uid).subscribe(
+          user => {
+            this.user.position= user.position;
+            this.user.role = user.role;
+          }
+        );
+
+        if(this.user.photoURL)
+          this.currentPhoto = this.user.photoURL;
       
         this.auth.setAvatar(this.currentPhoto);
+        
+        console.log('this.user position');
+        console.log(this.user.position);
     });
   }
 

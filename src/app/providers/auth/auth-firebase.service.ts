@@ -7,16 +7,18 @@ import { UserModel } from '../../models/user.model';
 import { FileModel } from '../../models/file.model';
 import { AngularFireStorage } from '@angular/fire/storage';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import { AngularFirestoreDocument, AngularFirestore } from '@angular/fire/firestore';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthFirebaseService {
   public user: Observable<firebase.User | null >;
+  public userFull$ : UserModel={};
   private filePath: string;
   avatar$:BehaviorSubject<any>;
 
-  constructor(private afAuth: AngularFireAuth, private storage: AngularFireStorage) {
+  constructor(private afAuth: AngularFireAuth, private storage: AngularFireStorage, private afs: AngularFirestore) {
     this.user = this.afAuth.authState;
     this.avatar$ = new BehaviorSubject(null);
   }
@@ -41,13 +43,17 @@ export class AuthFirebaseService {
   }
   
   // Registro con email
-  signUpWithEmail(email, pass): Promise<firebase.auth.UserCredential> {
+  signUpWithEmail(user:UserModel): Promise<firebase.auth.UserCredential> {
+    console.log(user);
     return new Promise((resolve,reject) => {
-      this.afAuth.createUserWithEmailAndPassword(email,pass)
+      this.afAuth.createUserWithEmailAndPassword(user.email,user.password)
       .then(
-        userData => resolve(userData),
-        err => reject(err)
-      )
+        userData =>{
+          resolve(userData);
+          this.updateUser(user);
+          this.updateUserData(userData.user,user)
+        })
+      .catch(err => console.log(reject(err)))
     });
    }
 
@@ -56,7 +62,8 @@ export class AuthFirebaseService {
     return new Promise((resolve,reject) => {
       return this.afAuth.signInWithEmailAndPassword(email,pass)
       .then(
-        userData => resolve(userData),
+        userData => {resolve(userData);
+        },
         err => reject(err)
       )
     });
@@ -104,6 +111,25 @@ export class AuthFirebaseService {
     )).then(() => console.log('updated'))
       .catch(err => console.log('error',err));
   }
+  
+  private updateUserData(user,userM){
+    const userRef: AngularFirestoreDocument<any> = this.afs.doc(`users/${user.uid}`);
+    const data: UserModel = {
+      id:user.uid,
+      email:user.email,
+      photoURL:user.photoURL,
+      displayName:user.displayName,
+      role:{
+        colaborador: userM.role==='colaborador',
+        coordinador: userM.role==='coordinador',
+      },
+      position: userM.position
+    }
+    return userRef.set(data,{merge:true});
+  }
 
-
+  getUserRolAndPosition(userUid)
+  {
+    return this.afs.doc<UserModel>(`users/${userUid}`).valueChanges();
+  }
 }
