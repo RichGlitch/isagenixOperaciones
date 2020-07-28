@@ -4,6 +4,8 @@ import { AuthFirebaseService } from '../../providers/auth/auth-firebase.service'
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 import { UserModel } from '../../models/user.model';
+import { Observable } from 'rxjs';
+import {map} from 'rxjs/operators';
 
 function passwordMatcher(c: AbstractControl) : {[key: string]: boolean} | null {
   const passwordControl = c.get('password');
@@ -24,11 +26,13 @@ function passwordMatcher(c: AbstractControl) : {[key: string]: boolean} | null {
   styleUrls: ['./signup.component.css']
 })
 export class SignupComponent implements OnInit {
-
+  
   signup: FormGroup;
-  isCoordinador:boolean=false;
+  isCoordinador:boolean=true;
   user:UserModel;
+  managers:UserModel[]=[{
 
+  }];
   constructor(private fb: FormBuilder,private auth: AuthFirebaseService,private router: Router) { 
    }
 
@@ -58,19 +62,23 @@ export class SignupComponent implements OnInit {
     return this.signup.get('position').invalid && this.signup.get('position').touched;
   }
   
+  get invalidManagerSelected(){
+    return this.signup.get('managerId').invalid && this.signup.get('managerId').touched;
+  }
 
   createForm() {
     this.signup = this.fb.group({
       email:      ['',[Validators.required,Validators.pattern('[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$')]],
       name:   ['',[Validators.required,Validators.minLength(7)]],
       position:   ['',Validators.required],
-      role: ['colaborador',Validators.required],
+      role: ['coordinador',Validators.required],
       passwordGroup: this.fb.group ({
         password:   ['',[Validators.required,Validators.minLength(6)]],
         confirmPassword:   ['',[Validators.required,Validators.minLength(6)]],
       },{validator: passwordMatcher}),
       specialCode: ['',],
-      rememberMe: ['',]
+      //rememberMe: ['',],
+      managerId:['Elige a tu coordinador...']
     });
   }
 
@@ -79,22 +87,36 @@ export class SignupComponent implements OnInit {
     this.signup.get('role').valueChanges.subscribe(
       value => this.setNotification(value)
     );
+    this.auth.getManagers().subscribe(val => {
+      this.managers = val;
+      this.managers = this.managers.filter(s=>s.isManager);
+    });
   }
   
   specialCodeValidator(control: FormControl){
     var code = control.value;
-    console.log(code);
     if(code !== 'abcd')
       return {specialCode:{code:'incorrect'}};
   }
+
+  managerValidator(control:FormControl){
+    var manager = control.value;
+    console.log(manager);
+    if(manager==0 || manager == 'Elige a tu coordinador...')
+      return {manager:{manager:'incorrect'}}
+  }
+
   setNotification(role: string): void {
     const codeControl = this.signup.get('specialCode');
+    const managerControl = this.signup.get('managerId');
      if (role === 'coordinador') {
       this.isCoordinador = true;
       codeControl.setValidators([Validators.required,this.specialCodeValidator]);
+      managerControl.clearValidators();
       
      } else {
       this.isCoordinador = false;
+      managerControl.setValidators([Validators.required,this.managerValidator])
       codeControl.clearValidators();
      }
      codeControl.updateValueAndValidity();
@@ -112,7 +134,7 @@ export class SignupComponent implements OnInit {
     Swal.showLoading();
     
     this.fillUser();
-
+    console.log(this.user);
     this.auth.signUpWithEmail(this.user)
       .then((res) => {
         Swal.close();
@@ -121,7 +143,7 @@ export class SignupComponent implements OnInit {
                             icon:'error',
                             title:'error al autenticar',
                             text:err
-                          })
+      })
       );
   }
 
@@ -129,9 +151,11 @@ export class SignupComponent implements OnInit {
     this.user = {
       displayName:this.signup.get('name').value,
       email:this.signup.get('email').value,
-      role:this.signup.get('role').value,
+      isManager:this.signup.get('role').value==='coordinador',
       position:this.signup.get('position').value,
-      password:this.signup.get('passwordGroup.password').value
+      password:this.signup.get('passwordGroup.password').value,
+      manager:this.signup.get('managerId').value,
     }
   }
+  
 }

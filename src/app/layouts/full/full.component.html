@@ -55,7 +55,7 @@
             <!-- ============================================================== -->
             <div class="navbar-collapse collapse" id="navbarSupportedContent" [attr.data-navbarbg]="options.navbarbg"
                 [ngbCollapse]="!isCollapsed">
-                <app-navigation (toggleSidebar)="toggleSidebarType()" class="w-100"></app-navigation>
+                <app-navigation [user]="user" (toggleSidebar)="toggleSidebarType()" class="w-100"></app-navigation>
             </div>
         </nav>
     </header>
@@ -65,7 +65,7 @@
     <aside class="left-sidebar" [attr.data-sidebarbg]="options.sidebarbg" (mouseover)="Logo()" (mouseout)="Logo()">
         <!-- Sidebar scroll-->
         <div class="scroll-sidebar" [perfectScrollbar]="config">
-            <app-sidebar></app-sidebar>
+            <app-sidebar [user]="user"></app-sidebar>
         </div>
         <!-- End Sidebar scroll-->
     </aside>

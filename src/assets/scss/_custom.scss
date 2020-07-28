@@ -16,13 +16,21 @@
     width: 100%;
     margin-top: 10px;
 }
-
 .sidebar-nav .user-profile > img {
     width: 80%;
+    height: auto;
     border-radius: 100%;
     margin-bottom: 10px;
 }
 
+.frame{
+    height: 200px;
+    border-radius: 100%;
+    width: 80%;
+    min-width: 200px;
+    background: transparent no-repeat center;
+    background-size: cover;
+}
 .strongText{
     font-weight: 700;
     font-size: 1.3em;

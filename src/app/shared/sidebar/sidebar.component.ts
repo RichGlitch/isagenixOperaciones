@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, OnInit } from '@angular/core';
+import { Component, AfterViewInit, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import { ROUTES } from './menu-items';
 import { RouteInfo } from './sidebar.metadata';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -13,13 +13,16 @@ declare var $: any;
   selector: 'app-sidebar',
   templateUrl: './sidebar.component.html'
 })
-export class SidebarComponent implements OnInit {
+export class SidebarComponent implements OnInit{
+
   showMenu = '';
   showSubMenu = '';
   currentPhoto = 'https://api.adorable.io/avatars/285/newUser.png';
   avatar$:any;
 
-  user:UserModel={};
+  @Input() user:UserModel={};
+  
+
   public sidebarnavItems: any[];
   // this is for the open close
   addExpandClass(element: any) {
@@ -48,42 +51,42 @@ export class SidebarComponent implements OnInit {
     private router: Router,
     private auth: AuthFirebaseService,
     private route: ActivatedRoute
-  ) {}
+  ) {
+    this.avatar$= this.auth.getAvatar();
+    this.setUserMenu(this.user.isManager);
+    this.sidebarnavItems = this.sidebarOptions.filter(sidebarnavItem => sidebarnavItem);
+  }
 
+  sidebarOptions:RouteInfo[];
   // End open close
   ngOnInit() {
-    this.sidebarnavItems = ROUTES.filter(sidebarnavItem => sidebarnavItem);
-    this.avatar$ =this.auth.getAvatar();
-    this.auth.user.subscribe( user =>{
-      this.user = {
-        displayName:user.displayName,
-        email:user.email,
-        photoURL:user.photoURL,
-        id:user.uid
-      };
-      
-      console.log('this.user ');
-      console.log(this.user);
-  
-        this.auth.getUserRolAndPosition(user.uid).subscribe(
-          user => {
-            this.user.position= user.position;
-            this.user.role = user.role;
-          }
-        );
-
-        if(this.user.photoURL)
-          this.currentPhoto = this.user.photoURL;
-      
-        this.auth.setAvatar(this.currentPhoto);
-        
-        console.log('this.user position');
-        console.log(this.user.position);
-    });
+   
   }
 
   onLogOut(){
     this.auth.signOut();
     this.router.navigate(['login']);
+  }
+
+  private setUserMenu(isManager:boolean){
+    if(isManager)
+    this.sidebarOptions=[{
+      path: '/home/colaboradores',
+      title: 'Colaboradores',
+      icon: 'mdi mdi-gauge',
+      class: '',
+      extralink: false,
+      submenu: []
+    }];
+  else
+    this.sidebarOptions=[
+      {
+        path: '/home/reportes',
+        title: 'Reportes',
+        icon: 'mdi mdi-gauge',
+        class: '',
+        extralink: false,
+        submenu: []
+      }];
   }
 }

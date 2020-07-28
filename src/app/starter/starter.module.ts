@@ -41,6 +41,17 @@ const routes: Routes = [
     component: TableComponent
   },
   {
+    path: 'colaboradores/:id',
+    data: {
+      title: 'Colaborador',
+      urls: [
+        { title: 'Home', url: '/dashboard' },
+        { title: 'Colaboradores' }
+      ]
+    },
+    component: ReportsComponent
+  },
+  {
     path: 'perfil',
     data: {
       title: 'Mi Perfil',
@@ -69,7 +80,8 @@ const routes: Routes = [
     StarterComponent,
     NgbdSortableHeader,
     TableComponent,
-    ProfileComponent
+    ProfileComponent,
+    ReportsComponent
   ],
   providers:[TableService]
 })

@@ -41,11 +41,6 @@ export class LoginComponent implements OnInit {
   
   onlogin(){
     if(this.login.invalid) return;
-
-    console.log(this.login);
-    console.log(this.login.get('email').value);
-
-
     Swal.fire({
       allowOutsideClick: false,
       icon:'info',
@@ -54,14 +49,17 @@ export class LoginComponent implements OnInit {
     
     Swal.showLoading();
 
-
-    this.auth.signInWithEmail(this.login.get('email').value,this.login.get('password').value)
+    const user = {
+      email:this.login.get('email').value,
+      password:this.login.get('password').value
+    }
+    this.auth.signInWithEmail(user.email,user.password)
       .then((res) => {
         Swal.close();
         this.router.navigate(['/home']);
       }).catch(err =>  Swal.fire({
                             icon:'error',
-                            title:'error al autenticar',
+                            title:'Error al autenticar',
                             text:err
                           })
       );
