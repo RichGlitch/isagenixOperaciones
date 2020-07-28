@@ -2,13 +2,14 @@
   <div class="menu-container-ul">
     <ul id="sidebarnav" >
         <li class="user-profile profile-flex-container">
-            <img  src="{{avatar$ | async}}" alt="user" />
+            <!-- <img  src="{{avatar$ | async}}" alt="user" /> -->
+            <div  class="frame" style="background-image: url('{{avatar$ | async}}')" alt="user"></div>
             <!-- <a routerLinkActive="active" routerLink="/account-settings"><i class="mdi mdi-account-edit"></i></a> -->
-            <span class=" strongText">{{user.displayName?user.displayName:'Usuario Nuevo'}}</span>
+            <span class=" strongText">{{user.displayName?user.displayName:''}}</span>
          
             <div class="user-profile-data ">
               <span class="font-weight-bold">{{user.position}}</span>
-              <span class="hide-menu">Coordinador: <strong>Marco Antonio Casiano Martinez</strong></span>
+              <span class="hide-menu" *ngIf='!user.isManager'>Coordinador: <strong>{{user.manager}}</strong></span>
             </div>
             
         </li>

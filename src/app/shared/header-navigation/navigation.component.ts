@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, EventEmitter, Output, OnInit } from '@angular/core';
+import { Component, AfterViewInit, EventEmitter, Output, OnInit, Input } from '@angular/core';
 import {
   NgbModal,
   ModalDismissReasons,
@@ -22,7 +22,7 @@ export class NavigationComponent implements AfterViewInit,OnInit {
 
   public showSearch = false;
   currentPhoto = 'https://api.adorable.io/avatars/285/newUser.png';
-  user:UserModel={};
+  @Input() user:UserModel={};
   avatar$:any;
 
   constructor(private modalService: NgbModal,private router: Router,
@@ -30,29 +30,20 @@ export class NavigationComponent implements AfterViewInit,OnInit {
   
     ngOnInit(): void {
       this.avatar$= this.auth.getAvatar();
-      this.auth.user.subscribe( user =>{
-        this.user = user;
-        console.log('from asf.user');
-        console.log(user);
+      // this.auth.user.subscribe( user =>{
+      //   this.user = user;
 
-        if(this.user.photoURL)
-          this.currentPhoto = this.user.photoURL;
+      //   if(this.user.photoURL)
+      //     this.currentPhoto = this.user.photoURL;
   
-          this.auth.setAvatar(this.currentPhoto);
-          this.auth.getUserRolAndPosition(user.uid).subscribe(
-            user => {
-              console.log('user from docs');
-              console.log(user);
-              this.user = {
-                role:{
-                  colaborador: user.role==='colaborador',
-                  coordinador: user.role==='coordinador',
-                },
-                position: user.position
-              }
-            }
-          );
-      });
+      //     this.auth.setAvatar(this.currentPhoto);
+      //     this.auth.getUserRolAndPosition(user.uid).subscribe(
+      //       user => {
+      //         this.user.position=  user.position;
+      //         this.user.isManager=  user.isManager;
+      //       }
+      //     );
+      // });
       
   }
 

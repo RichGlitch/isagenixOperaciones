@@ -3,6 +3,8 @@ import { TableService } from './ngtable.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Table } from './ngtable';
+import { EmployeesService } from '../employees/employees.service';
+import { Employee } from '../../models/employee.model';
 
 
 export type SortDirection = 'asc' | 'desc' | '';
@@ -43,14 +45,14 @@ export class NgbdSortableHeader {
 export class TableComponent implements OnInit {
 
   clientList = this.tableService.getTable();
-  sortClientList:Table[]|null=null;
-  filterClient:Table[]|null=null;
-  cfilterClient:Table[]|null=null;
+  sortClientList:Employee[]|null=null;
+  filterClient:Employee[]|null=null;
+  cfilterClient:Employee[]|null=null;
   page = 1;
   pageSize = 2;
   editClient: FormGroup=Object.create(null);
   editAddLabel: string = 'Edit';
-  clientDetail: Table |null=null;
+  clientDetail: Employee |null=null;
   totalLengthOfCollection: number=0;
 
   //Sorting purpose...
@@ -60,7 +62,7 @@ export class TableComponent implements OnInit {
   
 
 
-  constructor(private tableService: TableService, private fb: FormBuilder, private modalService: NgbModal) {
+  constructor(private tableService: EmployeesService, private fb: FormBuilder, private modalService: NgbModal) {
     this.filterClient = this.clientList;
     this.cfilterClient = this.clientList;
     this.sortClientList = this.clientList;
@@ -70,7 +72,6 @@ export class TableComponent implements OnInit {
   ngOnInit() {
     this.editClient = this.fb.group({
       fullName: ['', Validators.required],
-      UserName: ['', Validators.required],
       email: ['', [Validators.email, Validators.required]]
     })
   }
@@ -113,7 +114,7 @@ export class TableComponent implements OnInit {
 
   filter(v: string) {
     return this.tableService.getTable().filter(x => x.Name?.toLowerCase().indexOf(v.toLowerCase()) !== -1 ||
-      x.UserName?.toLowerCase().indexOf(v.toLowerCase()) !== -1 || x.Email?.toLowerCase().indexOf(v.toLowerCase()) !== -1);
+      x.Position?.toLowerCase().indexOf(v.toLowerCase()) !== -1 || x.Email?.toLowerCase().indexOf(v.toLowerCase()) !== -1);
   }
 
   
@@ -135,7 +136,7 @@ export class TableComponent implements OnInit {
 
   cfilter(v: string) {
     return this.tableService.getTable().filter(x => x.Name?.toLowerCase().indexOf(v.toLowerCase()) !== -1 ||
-      x.UserName?.toLowerCase().indexOf(v.toLowerCase()) !== -1 || x.Email?.toLowerCase().indexOf(v.toLowerCase()) !== -1);
+      x.Position?.toLowerCase().indexOf(v.toLowerCase()) !== -1 || x.Email?.toLowerCase().indexOf(v.toLowerCase()) !== -1);
 
   }
 
@@ -171,75 +172,6 @@ export class TableComponent implements OnInit {
 
   formsErrors = {
   }
-
-
-  openModal(targetModal:NgbModal, client:any) {
-    
-    this.modalService.open(targetModal, {
-      centered: true,
-      backdrop: 'static'
-    });
-
-    if (client == null) {
-      this.editAddLabel = 'Add'
-    }
-
-    if (client != null) {
-      this.clientDetail = client;
-      this.editAddLabel = 'Edit'
-      this.editClient.patchValue({
-        fullName: client.Name,
-        UserName: client.UserName,
-        email: client.Email
-      });
-    }
-
-  }
-
-  closeBtnClick() {
-    
-    this.modalService.dismissAll()
-    this.ngOnInit();
-  }
-
-  delete(id: number): void {
-    
-    this.cfilterClient = this.cfilterClient!.filter(client => client.Id !== id);
-  }
-
-  onSubmit() {
-    
-    if (this.clientDetail != null) {
-
-      const index = this.tableService.getTable().indexOf(this.clientDetail);
-
-      this.clientDetail.Name = this.editClient?.get('fullName')?.value;
-      this.clientDetail.UserName = this.editClient?.get('UserName')?.value;
-      this.clientDetail.Email = this.editClient?.get('email')?.value;
-
-
-      this.tableService.getTable()[index] = this.clientDetail;
-    }
-    else {
-
-      this.clientDetail = new Table();
-
-      this.clientDetail.Id = Math.max.apply(Math, this.tableService.getTable().map(function (o) { return o.Id; })) + 1;
-
-      this.clientDetail.Name = this.editClient?.get('fullName')?.value;
-      this.clientDetail.UserName = this.editClient?.get('UserName')?.value;
-      this.clientDetail.Email = this.editClient?.get('email')?.value;
-      this.clientDetail.imagePath = 'assets/image/3.jpg';
-
-      this.tableService.getTable().push(this.clientDetail);
-
-
-    }
-    this.modalService.dismissAll();
-    this.clientDetail = null;
-    this.ngOnInit();
-  }
-
 
 
 }

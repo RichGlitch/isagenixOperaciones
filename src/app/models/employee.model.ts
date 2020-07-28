@@ -18,7 +18,7 @@ export const employeesList: Employee[] = [
         Position:'Recepción',
         Email: 's@gmail.com',
         imagePath: 'assets/images/users/1.jpg',
-        Q1:'',
+        Q1:'60%',
         Q2:'',
         Q3:'',
         Q4:''
@@ -29,7 +29,7 @@ export const employeesList: Employee[] = [
         Position:'CCR I',
         Email: 'j@gmail.com',
         imagePath: 'assets/images/users/2.jpg',
-        Q1:'',
+        Q1:'50%',
         Q2:'',
         Q3:'',
         Q4:''

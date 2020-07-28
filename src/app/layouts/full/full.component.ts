@@ -3,6 +3,8 @@ import { Router } from '@angular/router';
 declare var $: any;
 
 import { PerfectScrollbarConfigInterface } from 'ngx-perfect-scrollbar';
+import { AuthFirebaseService } from '../../providers/auth/auth-firebase.service';
+import { UserModel } from '../../models/user.model';
 
 @Component({
   selector: 'app-full-layout',
@@ -11,8 +13,14 @@ import { PerfectScrollbarConfigInterface } from 'ngx-perfect-scrollbar';
 })
 export class FullComponent implements OnInit {
   public config: PerfectScrollbarConfigInterface = {};
+  
+  currentUser$:any;
+  user:UserModel={};
+  avatar$:any;
+  currentPhoto = 'https://api.adorable.io/avatars/285/newUser.png';
+  currentuserauth:any;
 
-  constructor(public router: Router) { }
+  constructor(public router: Router,private auth : AuthFirebaseService) { }
 
   tabStatus = 'justified';
 
@@ -42,11 +50,38 @@ export class FullComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.loadCurrentUser();
+
     if (this.router.url === '/') {
-      this.router.navigate(['/dashboard/classic']);
+      this.router.navigate(['/home']);
     }
+
     this.defaultSidebar = this.options.sidebartype;
     this.handleSidebar();
+  }
+
+  loadCurrentUser(){
+    this.auth.user.subscribe( user =>{
+    this.user = user;
+    this.auth.getUserRolAndPosition(user.uid).subscribe(
+      user => {
+        this.user.manager = user.manager;
+        this.user.position= user.position;
+        this.user.isManager = user.isManager;
+        if(this.user.photoURL)
+          this.currentPhoto = this.user.photoURL;
+        this.auth.setAvatar(this.currentPhoto);
+
+        if (this.router.url === '/home/colaboradores' && !this.user.isManager) {
+          this.router.navigate(['/home/reportes']);
+        }
+        
+        if (this.router.url === '/home/reportes' && this.user.isManager) {
+          this.router.navigate(['/home/colaboradores']);
+        }
+        }
+      );
+    });
   }
 
   @HostListener('window:resize', ['$event'])
@@ -77,7 +112,6 @@ export class FullComponent implements OnInit {
       default:
     }
   }
-
   toggleSidebarType() {
     switch (this.options.sidebartype) {
       case 'full':

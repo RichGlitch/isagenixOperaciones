@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { map, catchError, finalize } from 'rxjs/operators';
+import { map, catchError, finalize, flatMap } from 'rxjs/operators';
 import * as firebase from 'firebase/app';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { UserModel } from '../../models/user.model';
@@ -50,8 +50,8 @@ export class AuthFirebaseService {
       .then(
         userData =>{
           resolve(userData);
-          this.updateUser(user);
-          this.updateUserData(userData.user,user)
+          this.updatePhotoAndNameUser(user);
+          this.updateUserData(userData.user,user);
         })
       .catch(err => console.log(reject(err)))
     });
@@ -93,16 +93,16 @@ export class AuthFirebaseService {
           fileRef.getDownloadURL().subscribe( urlImage => {
             user.photoURL = urlImage;
             this.setAvatar(urlImage);
-            this.updateUser(user);
+            this.updatePhotoAndNameUser(user);
           })
         })
       ).subscribe();
     }
     else 
-      this.updateUser(user);
+      this.updatePhotoAndNameUser(user);
   }
 
-  updateUser(user: UserModel){
+  updatePhotoAndNameUser(user: UserModel){
     return this.afAuth.currentUser.then(u => u.updateProfile(
       {
         displayName:user.displayName,
@@ -112,24 +112,49 @@ export class AuthFirebaseService {
       .catch(err => console.log('error',err));
   }
   
-  private updateUserData(user,userM){
-    const userRef: AngularFirestoreDocument<any> = this.afs.doc(`users/${user.uid}`);
+  private updateUserData(user,userM:UserModel){
+    const userRef: AngularFirestoreDocument<any> = this.afs.doc(`Users/${user.uid}`);
+    var name = userM.displayName.toString();
     const data: UserModel = {
       id:user.uid,
       email:user.email,
       photoURL:user.photoURL,
-      displayName:user.displayName,
-      role:{
-        colaborador: userM.role==='colaborador',
-        coordinador: userM.role==='coordinador',
-      },
-      position: userM.position
+      displayName:name,
+      isManager:userM.isManager,
+      position: userM.position,
+      manager:userM.manager
     }
     return userRef.set(data,{merge:true});
   }
 
   getUserRolAndPosition(userUid)
   {
-    return this.afs.doc<UserModel>(`users/${userUid}`).valueChanges();
+    return this.afs.doc<UserModel>(`Users/${userUid}`).valueChanges();
   }
+
+  getManagers()//:Observable<UserModel[]>
+  {
+    // return this.afs.collection('/Users',ref => ref//.where('isManager','==',true)
+    // )
+    // .snapshotChanges()
+    // .pipe(
+    //   map(snaps => this.convertSnaps<UserModel>(snaps))
+    // );
+    // console.log('val getmanagers()');
+    // console.log(query);
+    return this.afs.collection('Users').valueChanges();
+
+
+    // return query;
+  }
+
+  convertSnaps<T>(snaps) {
+    return <T[]>snaps.map(snap => {
+        return {
+            id: snap.payload.doc.id,
+            ...snap.payload.doc.data()
+        };
+
+    });
+}
 }

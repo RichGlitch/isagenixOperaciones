@@ -61,7 +61,7 @@
                                             <input class="form-check-input"
                                                     type="radio"
                                                     value="colaborador"
-                                                    formControlName="role"> Colaborador
+                                                    formControlName="role">Soy Colaborador
                                         </label>
                                     </div>
                                     <div class="form-check form-check-inline">
@@ -69,12 +69,20 @@
                                             <input class="form-check-input"
                                                     type="radio"
                                                     value="coordinador"
-                                                    formControlName="role"> Coordinador
+                                                    formControlName="role">Soy Coordinador
                                         </label>
                                     </div>
-                                    es coordinador {{isCoordinador}}
                                 </div>
                             </div>
+                        </div>
+                        {{isCoordinador}}
+                        <div *ngIf="!isCoordinador" class="form-group">
+                            <label>Mi Coordinador</label>
+                            <select class="custom-select col-12" id="inlineFormCustomSelect" formControlName="managerId" [class.is-invalid]="invalidManagerSelected">
+                                <option value="Elige a tu coordinador...">Elige a tu coordinador...</option>
+                                <option *ngFor="let manager of managers" [ngValue]="manager.displayName">{{manager.displayName}}</option>    
+                            </select>
+                            <small *ngIf="invalidManagerSelected" class="text-danger">Código de coordinador incorrecto</small>
                         </div>
                         <div *ngIf="isCoordinador" class="form-group row animated fadeInDown">
                             <div class="col-12 ">
