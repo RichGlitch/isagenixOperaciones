@@ -14,6 +14,8 @@ import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { ProfileComponent } from '../pages/profile/profile.component';
 import { AuthGuard } from '../authentication/guards/auth.guard';
 import { NotFoundComponent } from '../shared/not-found/not-found.component';
+import { ReportCardComponent } from '../pages/reports/report-card/report-card.component';
+import { QuarterResultComponent } from '../pages/reports/report-card/quarter-result/quarter-result.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'reportes', pathMatch: 'full' },
@@ -81,7 +83,9 @@ const routes: Routes = [
     NgbdSortableHeader,
     TableComponent,
     ProfileComponent,
-    ReportsComponent
+    ReportsComponent,
+    ReportCardComponent,
+    QuarterResultComponent
   ],
   providers:[TableService]
 })
