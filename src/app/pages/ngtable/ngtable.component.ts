@@ -5,6 +5,10 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Table } from './ngtable';
 import { EmployeesService } from '../employees/employees.service';
 import { Employee } from '../../models/employee.model';
+import { UsersService } from 'src/app/providers/firebase/users.service';
+import { UserModel } from 'src/app/models/user.model';
+import { AuthFirebaseService } from '../../providers/auth/auth-firebase.service';
+import { Observable } from 'rxjs';
 
 
 export type SortDirection = 'asc' | 'desc' | '';
@@ -44,16 +48,18 @@ export class NgbdSortableHeader {
 })
 export class TableComponent implements OnInit {
 
-  clientList = this.tableService.getTable();
-  sortClientList:Employee[]|null=null;
-  filterClient:Employee[]|null=null;
-  cfilterClient:Employee[]|null=null;
+  clientList: UserModel[]=[];
+  // clientList = this.tableService.getTable();
+  sortClientList:UserModel[]|null=null;
+  filterClient:UserModel[]|null=null;
+  cfilterClient:UserModel[]|null=null;
   page = 1;
   pageSize = 2;
   editClient: FormGroup=Object.create(null);
   editAddLabel: string = 'Edit';
   clientDetail: Employee |null=null;
   totalLengthOfCollection: number=0;
+  userData: Observable<firebase.User>;
 
   //Sorting purpose...
   @ViewChildren(NgbdSortableHeader) headers: QueryList<NgbdSortableHeader>=Object.create(null);
@@ -62,18 +68,37 @@ export class TableComponent implements OnInit {
   
 
 
-  constructor(private tableService: EmployeesService, private fb: FormBuilder, private modalService: NgbModal) {
-    this.filterClient = this.clientList;
-    this.cfilterClient = this.clientList;
-    this.sortClientList = this.clientList;
-    this.totalLengthOfCollection = this.cfilterClient.length;
+  constructor(private tableService: EmployeesService, private fb: FormBuilder, private modalService: NgbModal, private userService: UsersService,private auth: AuthFirebaseService) {
+    // this.filterClient = this.clientList;
+    // this.cfilterClient = this.clientList;
+    // this.sortClientList = this.clientList;
+    // this.totalLengthOfCollection = this.cfilterClient.length;
+
   }
 
   ngOnInit() {
-    this.editClient = this.fb.group({
-      fullName: ['', Validators.required],
-      email: ['', [Validators.email, Validators.required]]
-    })
+    
+    console.log('this.auth.currentUser');
+  
+    this.auth.user$.subscribe(
+      user => {
+              if(user)
+              {
+                console.log(user);
+                //this.auth.setCurrentUser(user);
+                this.userService.getUsers().subscribe(
+                  val => {
+                    this.clientList = val;
+                    this.clientList = this.clientList.filter(s=>s.manager == user.displayName);
+                    this.filterClient = this.clientList;
+                    this.cfilterClient = this.clientList;
+                    this.sortClientList = this.clientList;
+                    this.totalLengthOfCollection = this.cfilterClient.length;
+                    console.log(this.clientList);
+                  });
+              }
+          }
+    );
   }
 
   onSort({ column, direction }: SortEvent) {
@@ -86,8 +111,8 @@ export class TableComponent implements OnInit {
    // sorting client
 
     if (direction === '') {
-      this.sortClientList = this.tableService.getTable();
-      this.cfilterClient= this.tableService.getTable();
+      this.sortClientList = this.clientList;
+      this.cfilterClient= this.clientList;
     } else {
       // // //this.sortClientList = [...this.tableService.getTable()].sort((a, b) => {
       // // //  const res = compare(a[column] ,b?[column]);
@@ -113,8 +138,8 @@ export class TableComponent implements OnInit {
   }
 
   filter(v: string) {
-    return this.tableService.getTable().filter(x => x.Name?.toLowerCase().indexOf(v.toLowerCase()) !== -1 ||
-      x.Position?.toLowerCase().indexOf(v.toLowerCase()) !== -1 || x.Email?.toLowerCase().indexOf(v.toLowerCase()) !== -1);
+    return this.clientList.filter(x => x.displayName?.toLowerCase().indexOf(v.toLowerCase()) !== -1 ||
+      x.position?.toLowerCase().indexOf(v.toLowerCase()) !== -1 || x.email?.toLowerCase().indexOf(v.toLowerCase()) !== -1);
   }
 
   
@@ -135,8 +160,8 @@ export class TableComponent implements OnInit {
   }
 
   cfilter(v: string) {
-    return this.tableService.getTable().filter(x => x.Name?.toLowerCase().indexOf(v.toLowerCase()) !== -1 ||
-      x.Position?.toLowerCase().indexOf(v.toLowerCase()) !== -1 || x.Email?.toLowerCase().indexOf(v.toLowerCase()) !== -1);
+    return this.clientList.filter(x => x.displayName?.toLowerCase().indexOf(v.toLowerCase()) !== -1 ||
+      x.position?.toLowerCase().indexOf(v.toLowerCase()) !== -1 || x.email?.toLowerCase().indexOf(v.toLowerCase()) !== -1);
 
   }
 

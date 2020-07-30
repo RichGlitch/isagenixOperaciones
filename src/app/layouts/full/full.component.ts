@@ -61,7 +61,7 @@ export class FullComponent implements OnInit {
   }
 
   loadCurrentUser(){
-    this.auth.user.subscribe( user =>{
+    this.auth.user$.subscribe( user =>{
     this.user = user;
     this.auth.getUserRolAndPosition(user.uid).subscribe(
       user => {
@@ -71,7 +71,7 @@ export class FullComponent implements OnInit {
         if(this.user.photoURL)
           this.currentPhoto = this.user.photoURL;
         this.auth.setAvatar(this.currentPhoto);
-
+        this.auth.setCurrentUser(this.user);
         if (this.router.url === '/home/colaboradores' && !this.user.isManager) {
           this.router.navigate(['/home/reportes']);
         }

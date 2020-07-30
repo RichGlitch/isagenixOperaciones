@@ -200,7 +200,7 @@ export class EmployeesComponent implements OnInit {
 
   delete(id: number): void {
     
-    this.cfilterClient = this.cfilterClient!.filter(client => client.Id !== id);
+    //this.cfilterClient = this.cfilterClient!.filter(client => client.Id !== id);
   }
 
   onSubmit() {

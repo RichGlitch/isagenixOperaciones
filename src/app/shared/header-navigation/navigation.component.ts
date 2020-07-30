@@ -30,21 +30,6 @@ export class NavigationComponent implements AfterViewInit,OnInit {
   
     ngOnInit(): void {
       this.avatar$= this.auth.getAvatar();
-      // this.auth.user.subscribe( user =>{
-      //   this.user = user;
-
-      //   if(this.user.photoURL)
-      //     this.currentPhoto = this.user.photoURL;
-  
-      //     this.auth.setAvatar(this.currentPhoto);
-      //     this.auth.getUserRolAndPosition(user.uid).subscribe(
-      //       user => {
-      //         this.user.position=  user.position;
-      //         this.user.isManager=  user.isManager;
-      //       }
-      //     );
-      // });
-      
   }
 
 

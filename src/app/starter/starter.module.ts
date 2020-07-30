@@ -18,7 +18,6 @@ import { ReportCardComponent } from '../pages/reports/report-card/report-card.co
 import { QuarterResultComponent } from '../pages/reports/report-card/quarter-result/quarter-result.component';
 
 const routes: Routes = [
-  { path: '', redirectTo: 'reportes', pathMatch: 'full' },
   {
     path: 'reportes',
     data: {

@@ -23,4 +23,9 @@ export class UsersService {
   delete_Student(record_id) {
     this.firestore.doc('Users/' + record_id).delete();
   }
+
+  getUsers()
+  {
+    return this.firestore.collection('Users').valueChanges();
+  }
 }

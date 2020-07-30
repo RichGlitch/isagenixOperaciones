@@ -56,7 +56,16 @@ export class LoginComponent implements OnInit {
     this.auth.signInWithEmail(user.email,user.password)
       .then((res) => {
         Swal.close();
-        this.router.navigate(['/home']);
+        this.auth.getUserRolAndPosition(res.user.uid).subscribe(
+          user => {
+            if(user.isManager)
+              this.router.navigate(['/home/colaboradores']);
+            else
+              this.router.navigate(['/home/reportes']);
+          }
+        )
+        // 
+        // 
       }).catch(err =>  Swal.fire({
                             icon:'error',
                             title:'Error al autenticar',

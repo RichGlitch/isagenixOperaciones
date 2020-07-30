@@ -1,5 +1,7 @@
+import { NonNullAssert } from "@angular/compiler";
+
 export class Employee {
-    Id: number=0;
+    Id: string|null=null;
     public Name: string|null=null;
     public Position: string|null=null;
     public Email: string|null=null;
@@ -13,7 +15,7 @@ export class Employee {
   
 export const employeesList: Employee[] = [
     {
-        Id: 1,
+        Id: '1',
         Name: 'Sam',
         Position:'Recepción',
         Email: 's@gmail.com',
@@ -24,7 +26,7 @@ export const employeesList: Employee[] = [
         Q4:''
     },
     {
-        Id: 2,
+        Id: '2',
         Name: 'John',
         Position:'CCR I',
         Email: 'j@gmail.com',
@@ -35,7 +37,7 @@ export const employeesList: Employee[] = [
         Q4:''
     },
     {
-        Id: 3,
+        Id: '3',
         Name: 'Will Smith',
         Position:'CCR I Bilingüe y',
         Email: 'ws@gmail.com',
@@ -46,7 +48,7 @@ export const employeesList: Employee[] = [
         Q4:''
     },
     {
-        Id: 4,
+        Id: '4',
         Name: 'Tom Hardy',
         Position:'CCR I',
         Email: 'tom@gmail.com',
@@ -57,7 +59,7 @@ export const employeesList: Employee[] = [
         Q4:''
     },
     {
-        Id: 5,
+        Id: '5',
         Name: 'Martha Curse',
         Position:'CCR I',
         Email: 'martha@gmail.com',
@@ -68,7 +70,7 @@ export const employeesList: Employee[] = [
         Q4:''
     },
     {
-        Id: 6,
+        Id: '6',
         Name: 'Kristen',
         Position:'CCR I',
         Email: 'sweet@gmail.com',
@@ -79,7 +81,7 @@ export const employeesList: Employee[] = [
         Q4:''
     },
     {
-        Id: 7,
+        Id: '7',
         Name: 'Mam',
         Position:'CCR I',
         Email: 's@gmail.com',
@@ -90,7 +92,7 @@ export const employeesList: Employee[] = [
         Q4:''
     },
     {
-        Id: 8,
+        Id: '8',
         Name: 'Johnathan',
         Position:'CCR I',
         Email: 'jnathan@gmail.com',
@@ -101,7 +103,7 @@ export const employeesList: Employee[] = [
         Q4:''
     },
     {
-        Id: 9,
+        Id: '9',
         Name: 'Will mark',
         Position:'CCR I',
         Email: 'wsmark@gmail.com',

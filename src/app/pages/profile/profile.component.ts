@@ -21,6 +21,8 @@ export class ProfileComponent implements OnInit {
       email:'',
       photoURL:''
     };
+    tempuser : UserModel ;
+    userAuth:any;
     public currentImage= 'https://api.adorable.io/avatars/285/newUser.png';
     image: FileModel;
     
@@ -28,9 +30,27 @@ export class ProfileComponent implements OnInit {
     ngOnInit(): void {
       this.createForm();
 
-      this.auth.user.subscribe( user =>{
-        this.initFormValues(user);
-      });
+      // this.auth.user$.subscribe( user =>{
+      //   this.initFormValues(user);
+      // });
+
+      this.auth.user$.subscribe( user =>{
+        this.userAuth = user;
+        this.user = user;
+        this.auth.getUserRolAndPosition(user.uid).subscribe(
+          user => {
+            this.user.manager = user.manager;
+            this.user.position= user.position;
+            this.user.isManager = user.isManager;
+            this.tempuser = this.user;
+            if(this.user.photoURL)
+              this.currentImage = this.user.photoURL;
+
+            this.auth.setAvatar(this.currentImage);
+            this.initFormValues(this.user);
+            }
+          );
+        });
     }
     createForm() {
       this.profileForm = this.fb.group({
@@ -61,8 +81,12 @@ export class ProfileComponent implements OnInit {
       });
       
       this.user = this.profileForm.value;
+      this.user.id = this.userAuth.uid;
+      this.user.isManager = this.tempuser.isManager;
+      this.user.position = this.tempuser.position;
+      this.user.manager = this.tempuser.isManager?'':this.tempuser.manager;
       this.auth.saveProfile(this.user,this.image);
-      
+      //this.auth.updateUserData(this.userAuth,this.user);
     }
 
     handleImage(e){

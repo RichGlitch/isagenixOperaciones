@@ -13,38 +13,45 @@ import { AngularFirestoreDocument, AngularFirestore } from '@angular/fire/firest
   providedIn: 'root'
 })
 export class AuthFirebaseService {
-  public user: Observable<firebase.User | null >;
+  public user$: Observable<firebase.User | null >;
   public userFull$ : UserModel={};
   private filePath: string;
   avatar$:BehaviorSubject<any>;
+  currentUser$:BehaviorSubject<any>;
 
   constructor(private afAuth: AngularFireAuth, private storage: AngularFireStorage, private afs: AngularFirestore) {
-    this.user = this.afAuth.authState;
+    this.user$ = this.afAuth.authState;
     this.avatar$ = new BehaviorSubject(null);
+    this.currentUser$ = new BehaviorSubject(null);
   }
   
   // Obtener el estado de autenticación
   get authenticated():boolean {
-    return this.user != null; // True ó False
+    return this.user$ != null; // True ó False
   }
   
   getAvatar() {
     return this.avatar$.asObservable();
   }
   
-  
   setAvatar(value: any) {
     this.avatar$.next(value);
   }
 
+  getCurrentUser() {
+    return this.currentUser$.asObservable();
+  }
+  
+  setCurrentUser(value: any) {
+    this.currentUser$.next(value);
+  }
   // Obtener el observador del usuario actual
   get currentUser(): Observable<firebase.User | null> {
-    return this.user;
+    return this.user$;
   }
   
   // Registro con email
   signUpWithEmail(user:UserModel): Promise<firebase.auth.UserCredential> {
-    console.log(user);
     return new Promise((resolve,reject) => {
       this.afAuth.createUserWithEmailAndPassword(user.email,user.password)
       .then(
@@ -84,7 +91,7 @@ export class AuthFirebaseService {
   
   uploadImage(user: UserModel, image: FileModel) {
     if(image){
-      this.filePath = `images/${image.name}`;
+      this.filePath = `images/${user.displayName+image.name}`;
       const fileRef = this.storage.ref(this.filePath);
       const task = this.storage.upload(this.filePath,image);
       task.snapshotChanges()
@@ -94,6 +101,7 @@ export class AuthFirebaseService {
             user.photoURL = urlImage;
             this.setAvatar(urlImage);
             this.updatePhotoAndNameUser(user);
+            this.updateUserData(user,user)
           })
         })
       ).subscribe();
@@ -112,11 +120,14 @@ export class AuthFirebaseService {
       .catch(err => console.log('error',err));
   }
   
-  private updateUserData(user,userM:UserModel){
-    const userRef: AngularFirestoreDocument<any> = this.afs.doc(`Users/${user.uid}`);
+  updateUserData(user,userM:UserModel){
+    const userId = user.uid?user.uid:user.id;
+    console.log('llamada a data users');
+    console.log(`Users/${userId}`);
+    const userRef: AngularFirestoreDocument<any> = this.afs.doc(`Users/${userId}`);
     var name = userM.displayName.toString();
     const data: UserModel = {
-      id:user.uid,
+      id:userId,
       email:user.email,
       photoURL:user.photoURL,
       displayName:name,

@@ -12,6 +12,7 @@ import { Indicators } from '../../models/indicator.model';
 export class ReportsComponent implements OnInit {
   isCoordinador:boolean;
   indicators:Indicators[]=[{}];
+  colaboradorId:string='';
   constructor(
     private router: Router,
     private auth: AuthFirebaseService,
@@ -19,28 +20,20 @@ export class ReportsComponent implements OnInit {
     private indicatorsService: IndicatorsService) { }
 
   ngOnInit(): void {
-    //console.log(this.route.snapshot.params.id);
-    this.auth.user.subscribe( user =>{
+    if(this.route.snapshot.params.id){
+      this.colaboradorId = this.route.snapshot.params.id;
+    }
+    
+    this.auth.user$.subscribe( user =>{
       this.indicatorsService.getIndicators().subscribe(val => {
         this.indicators = val;
-        this.indicators = this.indicators.filter(s=>s.UserId == user.uid);
+        var id = this.route.snapshot.params.id?this.route.snapshot.params.id:user.uid;
+        this.indicators = this.indicators.filter(s=>s.UserId == id);
       });
     });
     
     // this.indicatorsService.saveIndicatorsList();
     console.log(this.indicators);
-    // if(!this.route.snapshot.params.id){
-    //   this.auth.user.subscribe( user =>{
-    //       this.auth.getUserRolAndPosition(user.uid).subscribe(
-    //         user => {
-    //           this.isCoordinador = user.role.coordinador;
-    //           if(user.role.coordinador)
-    //            this.router.navigate(['/home/colaboradores']);
-    //         }
-    //       );
-  
-    //   });
-    // }
   }
 
 }

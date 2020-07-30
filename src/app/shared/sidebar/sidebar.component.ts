@@ -19,10 +19,8 @@ export class SidebarComponent implements OnInit{
   showSubMenu = '';
   currentPhoto = 'https://api.adorable.io/avatars/285/newUser.png';
   avatar$:any;
-
-  @Input() user:UserModel={};
-  
-
+  user:UserModel={};
+currentUser$:any;
   public sidebarnavItems: any[];
   // this is for the open close
   addExpandClass(element: any) {
@@ -52,15 +50,24 @@ export class SidebarComponent implements OnInit{
     private auth: AuthFirebaseService,
     private route: ActivatedRoute
   ) {
-    this.avatar$= this.auth.getAvatar();
-    this.setUserMenu(this.user.isManager);
-    this.sidebarnavItems = this.sidebarOptions.filter(sidebarnavItem => sidebarnavItem);
+    
   }
 
   sidebarOptions:RouteInfo[];
   // End open close
   ngOnInit() {
-   
+    this.avatar$= this.auth.getAvatar();
+    this.currentUser$=this.auth.getCurrentUser().subscribe(
+      user => {
+              if(user)
+              {
+                this.setUserMenu(user.isManager);
+                this.user=user;
+                this.sidebarnavItems = this.sidebarOptions.filter(sidebarnavItem => sidebarnavItem);
+              }
+          }
+    );
+    
   }
 
   onLogOut(){
