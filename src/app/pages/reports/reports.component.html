@@ -12,7 +12,7 @@
                         </div>
                         <div class="card-body">
                             <div class="row mt-3 mb-3">
-                                <div  class="col-lg-6 col-md-6 col-sm-12">
+                                <div *ngIf="isManager" class="col-lg-6 col-md-6 col-sm-12">
                                     <div class="d-flex flex-row mb-2">
                                         <div class="">
                                             <img src="{{user.photoURL?user.photoURL:'assets/images/users/default_user.png'}}" alt="user" class="rounded-circle" width="100" />

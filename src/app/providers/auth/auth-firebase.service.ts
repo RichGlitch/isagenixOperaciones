@@ -107,7 +107,10 @@ export class AuthFirebaseService {
       ).subscribe();
     }
     else 
-      this.updatePhotoAndNameUser(user);
+      {
+        this.updatePhotoAndNameUser(user);
+        this.updateUserData(user,user)
+      }
   }
 
   updatePhotoAndNameUser(user: UserModel){
@@ -127,12 +130,14 @@ export class AuthFirebaseService {
     const data: UserModel = {
       id:userId,
       email:user.email,
-      photoURL:user.photoURL,
+      
       displayName:name,
       isManager:userM.isManager,
       position: userM.position,
       manager:userM.manager
     }
+    if(user.photoURL)
+      data.photoURL= user.photoURL;
     return userRef.set(data,{merge:true});
   }
 
