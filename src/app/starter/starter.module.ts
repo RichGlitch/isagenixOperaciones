@@ -84,7 +84,7 @@ const routes: Routes = [
     ProfileComponent,
     ReportsComponent,
     ReportCardComponent,
-    QuarterResultComponent
+    QuarterResultComponent,
   ],
   providers:[TableService]
 })

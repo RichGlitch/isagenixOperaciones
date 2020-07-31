@@ -122,8 +122,6 @@ export class AuthFirebaseService {
   
   updateUserData(user,userM:UserModel){
     const userId = user.uid?user.uid:user.id;
-    console.log('llamada a data users');
-    console.log(`Users/${userId}`);
     const userRef: AngularFirestoreDocument<any> = this.afs.doc(`Users/${userId}`);
     var name = userM.displayName.toString();
     const data: UserModel = {

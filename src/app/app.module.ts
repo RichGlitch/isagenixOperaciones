@@ -36,6 +36,7 @@ import { AngularFireModule } from '@angular/fire';
 import { AngularFirestoreModule } from '@angular/fire/firestore'
 import { AngularFireDatabaseModule } from '@angular/fire/database';
 import { NotFoundComponent } from './shared/not-found/not-found.component';
+import { ToastrModule } from 'ngx-toastr';
 
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
   suppressScrollX: true,
@@ -64,6 +65,7 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     FormsModule,
     HttpClientModule,
     RouterModule.forRoot(Approutes),
+    ToastrModule.forRoot(),
     PerfectScrollbarModule,
     ReactiveFormsModule,
     DataTablesModule,

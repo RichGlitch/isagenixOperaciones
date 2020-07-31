@@ -11,9 +11,40 @@
                             <h4 class="mb-0 text-white">INDICADORES</h4>
                         </div>
                         <div class="card-body">
-                            <div class="row">
+                            <div class="row mt-3 mb-3">
+                                <div  class="col-lg-6 col-md-6 col-sm-12">
+                                    <div class="d-flex flex-row mb-2">
+                                        <div class="">
+                                            <img src="{{user.photoURL?user.photoURL:'assets/images/users/default_user.png'}}" alt="user" class="rounded-circle" width="100" />
+                                        </div>
+                                        <div class="p-l-20">
+                                            <h3 class="font-medium">{{user.displayName | uppercase}}</h3>
+                                            <h6>CARGO:{{user.position | uppercase}}</h6>
+                                            <h6>{{user.email}}</h6>
+                                            <button class="btn btn-success" (click)="openLg(content3)">
+                                                <i class="fas fa-file-pdf" ></i> Exportar Reporte</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div  class="col-lg-6 col-md-6 col-sm-12 ">
+                                    <div class="d-flex flex-row mb-2">
+                                        <!-- <div class="">
+                                            <img src="{{user.photoURL?user.photoURL:'assets/images/users/default_user.png'}}" alt="user" class="rounded-circle" width="100" />
+                                        </div> -->
+                                        <div>
+                                            <small class="text-white mr-1 badge badge-muted">Sin registro</small>
+                                            <small class="text-white mr-1 badge badge-danger">No cumple</small>
+                                            <small class="text-white mr-1 badge badge-warning">Mínimo</small>
+                                            <small class="text-white mr-1 badge badge-info">Entregable</small>
+                                            <small class="text-white mr-1 badge badge-success">Excede</small>
+                                            <small class="text-white mr-1 badge badge-primary">Sobresaliente</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div  class="row">
                                 <div *ngFor="let indicator of indicators" class="col-lg-3 col-md-6 col-sm-12">
-                                    <app-report-card [indicator]="indicator"></app-report-card>
+                                    <app-report-card [isManager]="isManager" [indicator]="indicator"></app-report-card>
                                 </div>
                             </div>
                         </div>
@@ -24,3 +55,153 @@
         </div>
     </div>
 </div>
+<ng-template #content3 let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Reporte</h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="row">    
+            <div class="col-12">
+                <button class="btn btn-success ml-4" (click)="downloadPDF()"><i class="fas fa-download"></i> Descargar </button>
+                <div class="card p-3" id="exportData">
+                    <div class="card-body">
+                        <div class="row mb-3 pt-2 pb-1 border border-info">
+                            <div  class="col-sm-12">
+                                <div class="d-flex flex-row mb-2">
+                                    <!-- <div class="">
+                                        <img src="{{user.photoURL?user.photoURL:'assets/images/users/default_user.png'}}" alt="user" class="rounded-circle" width="100" />
+                                    </div> -->
+                                    <div>
+                                        <h3 class="font-medium">{{user.displayName | uppercase}}</h3>
+                                        <h6>CARGO:{{user.position | uppercase}}</h6>
+                                        <h6>{{user.email}}</h6>
+                                        <h6>{{today | date:'dd-MM-yyyy'}}</h6>
+                                    </div>
+                                </div>
+                            </div>
+                                    <!-- <div class="">
+                                        <img src="{{user.photoURL?user.photoURL:'assets/images/users/default_user.png'}}" alt="user" class="rounded-circle" width="100" />
+                                    </div> -->
+                                    
+                        </div>
+                        <div class="row">
+                            <div *ngIf="indicators.length == 0">
+                                <div class="card">
+                                    <div class="card-body border border-danger">
+                                          <h3>Ups! aún no cuentas con ningún indicador asignado. Contacta con tu coordinador.</h3>
+                                    </div>
+                                </div>
+                            </div>
+                            <div *ngFor="let indicator of indicators" class="col-md-6 col-sm-12">
+                                <app-report-card [isForExport]="true" [isManager]="isManager" [indicator]="indicator"></app-report-card>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+            
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Close</button>
+    </div>
+</ng-template>
+
+            <!-- <div class="table-responsive">
+                <table class="table">
+                    <thead class="bg-info text-white">
+                        <tr>
+                            <th scope="col">Indicador</th>
+                            <th scope="col">No Cumple</th>
+                            <th scope="col">Mínimo</th>
+                            <th scope="col">Entregable</th>
+                            <th scope="col">Excede</th>
+                            <th scope="col">Sobresaliente</th>
+                            <th scope="col">Resultado Q1</th>
+                            <th scope="col">Resultado Q2</th>
+                            <th scope="col">Resultado Q3</th>
+                            <th scope="col">Resultado Q4</th>
+                            <th scope="col">Unidad de Medida</th>
+                            <th scope="col">Forma de Cálculo</th>
+                            <th scope="col">Fuente</th>
+                            <th scope="col">Peso</th>
+                            <th scope="col">Tipo</th>
+
+                        </tr>
+                    </thead>
+                    <tbody class="border border-info">
+                        <tr>
+                            <th scope="row"><small>{{indicator.Indicator}}</small></th>
+                            <td><small>{{indicator.Fails}}</small></td>
+                            <td><small>{{indicator.Min}}</small></td>
+                            <td><small>{{indicator.Delivers}}</small></td>
+                            <td><small>{{indicator.Exceeds}}</small></td>
+                            <td><small>{{indicator.Excellent}}</small></td>
+                            <td><small>{{indicator.Q1}}</small></td>
+                            <td><small>{{indicator.Q2}}</small></td>
+                            <td><small>{{indicator.Q3}}</small></td>
+                            <td><small>{{indicator.Q4}}</small></td>
+                            <td><small>{{indicator.Metric}}</small></td>
+                            <td><small>{{indicator.Calculation}}</small></td>
+                            <td><small>{{indicator.Source}}</small></td>
+                            <td><small>{{indicator.Weight}}</small></td>
+                            <td><small>{{indicator.Type}}</small></td>
+                        </tr>
+                        
+                    </tbody>
+                </table>
+            </div> -->
+<!-- <tr class="table-active"> *ngFor="let indicator of indicators"
+                            <th scope="row">Active</th>
+                            <td>Cell</td>
+                            <td>Cell</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Default</th>
+                            <td>Cell</td>
+                            <td>Cell</td>
+                        </tr>
+                        <tr class="table-primary">
+                            <th scope="row">Primary</th>
+                            <td>Cell</td>
+                            <td>Cell</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Secondary</th>
+                            <td>Cell</td>
+                            <td>Cell</td>
+                        </tr>
+                        <tr class="table-success">
+                            <th scope="row">Success</th>
+                            <td>Cell</td>
+                            <td>Cell</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Danger</th>
+                            <td>Cell</td>
+                            <td>Cell</td>
+                        </tr>
+                        <tr class="table-danger">
+                            <th scope="row">Warning</th>
+                            <td>Cell</td>
+                            <td>Cell</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Info</th>
+                            <td>Cell</td>
+                            <td>Cell</td>
+                        </tr>
+                        <tr class="table-info">
+                            <th scope="row">Light</th>
+                            <td>Cell</td>
+                            <td>Cell</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Dark</th>
+                            <td>Cell</td>
+                            <td>Cell</td>
+                        </tr> -->

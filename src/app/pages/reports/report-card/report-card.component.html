@@ -1,7 +1,9 @@
 <div class="card border border-info">
                                         
     <div class="card-body text-center">
-        <h4 class="text-center text-info">{{indicator.Indicator}}</h4>
+        <h3 *ngIf="isForExport" class="text-center text-info">{{indicator.Indicator}}</h3>
+        <h4 *ngIf="!isForExport" class="text-center text-info">{{indicator.Indicator}}</h4>
+        <h2 *ngIf="isForExport">Peso:</h2>
         <h2>{{indicator.Weight }} %</h2>
         <div class="row pt-2 pb-2">
             <!-- Column -->
@@ -10,33 +12,53 @@
             </div>
             
         </div>
+        <div class="d-flex flex-column pb-2" *ngIf="isForExport">
+            <span class="align-self-center text-center small ">Unidad de medida: {{indicator.Metric}}</span>
+            <span class="align-self-center text-center small ">Fuente:{{indicator.Source}}</span>
+            <span class="align-self-center text-center small ">Forma de cálculo:{{indicator.Calculation}}</span>
+            <span class="align-self-center text-center small ">Tipo: {{indicator.Type}}</span>
+        </div> 
+        <div class="row">
+            
+            <div class=" mb-2 col-12" *ngIf="isForExport">
+                <small class="text-white ml-1 badge badge-muted">Sin registro</small>
+                <small class="text-white ml-1 badge badge-danger">No cumple</small>
+                <small class="text-white ml-1 badge badge-warning">Mínimo</small>
+                <small class="text-white ml-1 badge badge-info">Entregable</small>
+                <small class="text-white ml-1 badge badge-success">Excede</small>
+                <small class="text-white ml-1 badge badge-primary">Sobresaliente</small>
+            </div>
+        </div>
         
-        <!-- <div class="d-flex flex-column pb-2"> css-bar-50
-        <span class="align-self-center text-center small ">Unidad de medida: cantidad inicial vs final</span>
-        <span class="align-self-center text-center small ">Fuente: RTN REPORT  + REPORTE PDCA</span>
-        <span class="align-self-center text-center small ">Forma de cálculo:% REDUCCION DE RTN</span>
-        <span class="align-self-center text-center small ">Tipo: Cuantitativo</span>
-        </div> -->
         <div class="row">
         <div class="col-lg-12">
-            <div class="card bg-info">
+            <div class="card" [ngClass]="'bg-'+Q1ResultClass">
                 <div class="d-flex flex-row">
                     <div class="text-white align-self-center p-2">
-                        <div *ngIf="!indicator.Q1">
+                        <div *ngIf="(!indicator.Q1 || isManager) && !isForExport" >
                             <form class="mt-0" [formGroup]="Q1fg" (ngSubmit)="saveQ1()">
                                 <div class="input-group mb-0">
-                                    <input type="text" class="form-control" placeholder=""  aria-label="" aria-describedby="basic-addon1" formControlName="q1result" placeholder="Resultado">
-                                    <div class="input-group-append">
-                                        <button class="btn btn-success" type="submit" [ngClass]="{'disabled':Q1fg.invalid}"><i class="ti-save"></i></button>
+                                    <input *ngIf="indicator.Type == 'Cuantitativo'" type="text" class="form-control" placeholder=""  aria-label="" aria-describedby="basic-addon1" 
+                                    formControlName="q1result" placeholder="Resultado">
+                                    
+                                    <select *ngIf="indicator.Type == 'Cualitativo'"  class="custom-select"  formControlName="q1result" >
+                                        <option *ngIf="indicator.Fails" [ngValue]="indicator.Fails">{{indicator.Fails}}</option>    
+                                        <option *ngIf="indicator.Min" [ngValue]="indicator.Min">{{indicator.Min}}</option>    
+                                        <option *ngIf="indicator.Delivers" [ngValue]="indicator.Delivers">{{indicator.Delivers}}</option>    
+                                        <option *ngIf="indicator.Exceeds" [ngValue]="indicator.Exceeds">{{indicator.Exceeds}}</option>    
+                                        <option *ngIf="indicator.Excellent" [ngValue]="indicator.Excellent">{{indicator.Excellent}}</option>    
+                                    </select>
+                                    <div class="input-group-append" >
+                                        <button class="btn btn-success"  type="submit" [ngClass]="{'disabled':Q1fg.invalid}"><i class="ti-save"></i></button>
                                     </div>
                                 </div>
                             </form>
                         </div>
-                        <div *ngIf="indicator.Q1">
-                            <h3 class="text-white mb-0">{{indicator.Q1}}<span *ngIf="indicator.Unit=='Percentage'">%</span></h3>
+                        <div *ngIf="(indicator.Q1 && !isManager) || isForExport">
+                            <h4 class="text-white mb-0">{{indicator.Q1}}<span *ngIf="indicator.Unit=='Percentage'">%</span></h4>
                             <span class="text-white">Resultado</span>
                             <div class="progress">
-                                <div class="progress-bar bg-success" role="progressbar" [ngStyle]="{'width': indicator.Q1+'%'}" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                                <div class="progress-bar bg-progress-bar" role="progressbar" [ngStyle]="{'width': indicator.Q1+'%'}" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
                             </div>
                         </div>
                     </div>
@@ -47,27 +69,34 @@
             </div>
         </div>
         <div class="col-lg-12">
-            <div class="card bg-info">
+            <div class="card"  [ngClass]="'bg-'+Q2ResultClass">
                 <div class="d-flex flex-row">
                     <div class="p-2">
                         <h1 class="text-white p-2 mb-0">Q2</h1>
                     </div>
                     <div class="text-white align-self-center p-2">
-                        <div *ngIf="!indicator.Q2">
+                        <div *ngIf="(!indicator.Q2  || isManager) && !isForExport">
                             <form class="mt-0" [formGroup]="Q2fg" (ngSubmit)="saveQ2()">
                                 <div class="input-group mb-0">
-                                    <input type="text" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon1" formControlName="q2result" placeholder="Resultado">
+                                    <input *ngIf="indicator.Type == 'Cuantitativo'"  type="text" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon1" formControlName="q2result" placeholder="Resultado">
+                                    <select *ngIf="indicator.Type == 'Cualitativo'"  class="custom-select"  formControlName="q2result" >
+                                        <option *ngIf="indicator.Fails" [ngValue]="indicator.Fails">{{indicator.Fails}}</option>    
+                                        <option *ngIf="indicator.Min" [ngValue]="indicator.Min">{{indicator.Min}}</option>    
+                                        <option *ngIf="indicator.Delivers" [ngValue]="indicator.Delivers">{{indicator.Delivers}}</option>    
+                                        <option *ngIf="indicator.Exceeds" [ngValue]="indicator.Exceeds">{{indicator.Exceeds}}</option>    
+                                        <option *ngIf="indicator.Excellent" [ngValue]="indicator.Excellent">{{indicator.Excellent}}</option>    
+                                    </select>
                                     <div class="input-group-append">
                                         <button class="btn btn-success" type="submit" [ngClass]="{'disabled':Q2fg.invalid}" ><i class="ti-save"></i></button>
                                     </div>
                                 </div>
                             </form>
                         </div>
-                        <div *ngIf="indicator.Q2">
-                            <h3 class="text-white mb-0">{{indicator.Q2}}<span *ngIf="indicator.Unit=='Percentage'">%</span></h3>
+                        <div *ngIf="(indicator.Q2 && !isManager) || isForExport">
+                            <h4 class="text-white mb-0">{{indicator.Q2}}<span *ngIf="indicator.Unit=='Percentage'">%</span></h4>
                             <span class="text-white">Resultado</span>
                             <div class="progress">
-                                <div class="progress-bar bg-success" role="progressbar" [ngStyle]="{'width': indicator.Q2+'%'}" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                                <div class="progress-bar bg-progress-bar" role="progressbar" [ngStyle]="{'width': indicator.Q2+'%'}" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
                             </div>
                         </div>
                     </div>
@@ -75,55 +104,71 @@
             </div>
         </div>
         <div class="col-lg-12">
-            <div class="card bg-info">
+            <div class="card"  [ngClass]="'bg-'+Q3ResultClass">
                 <div class="d-flex flex-row">
                     <div class="text-white align-self-center p-2">
-                        <div *ngIf="!indicator.Q3">
+                        <div *ngIf="(!indicator.Q3  || isManager) && !isForExport">
                             <form class="mt-0" [formGroup]="Q3fg" (ngSubmit)="saveQ3()">
                                 <div class="input-group mb-0">
-                                    <input type="text" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon1" formControlName="q3result" placeholder="Resultado">
+                                    <input *ngIf="indicator.Type == 'Cuantitativo'"  type="text" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon1" formControlName="q3result" placeholder="Resultado">
+                                    
+                                    <select *ngIf="indicator.Type == 'Cualitativo'"  class="custom-select"  formControlName="q3result" >
+                                        <option *ngIf="indicator.Fails" [ngValue]="indicator.Fails">{{indicator.Fails}}</option>    
+                                        <option *ngIf="indicator.Min" [ngValue]="indicator.Min">{{indicator.Min}}</option>    
+                                        <option *ngIf="indicator.Delivers" [ngValue]="indicator.Delivers">{{indicator.Delivers}}</option>    
+                                        <option *ngIf="indicator.Exceeds" [ngValue]="indicator.Exceeds">{{indicator.Exceeds}}</option>    
+                                        <option *ngIf="indicator.Excellent" [ngValue]="indicator.Excellent">{{indicator.Excellent}}</option>    
+                                    </select>
                                     <div class="input-group-append">
                                         <button class="btn btn-success" type="submit" [ngClass]="{'disabled':Q3fg.invalid}"><i class="ti-save"></i></button>
                                     </div>
                                 </div>
                             </form>
                         </div>
-                        <div *ngIf="indicator.Q3">
-                            <h3 class="text-white mb-0">{{indicator.Q3}}<span *ngIf="indicator.Unit=='Percentage'">%</span></h3>
+                        <div *ngIf="(indicator.Q3 && !isManager) || isForExport">
+                            <h4 class="text-white mb-0">{{indicator.Q3}}<span *ngIf="indicator.Unit=='Percentage'">%</span></h4>
                             <span class="text-white">Resultado</span>
                             <div class="progress">
-                                <div class="progress-bar bg-success" role="progressbar" [ngStyle]="{'width': indicator.Q3+'%'}" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                                <div class="progress-bar bg-progress-bar" role="progressbar" [ngStyle]="{'width': indicator.Q3+'%'}" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
                             </div>
                         </div>
                     </div>
-                    <div class="p-2 bg-info ml-auto">
+                    <div class="p-2 ml-auto">
                         <h1 class="text-white p-2 mb-0">Q3</h1>
                     </div>
                 </div>
             </div>
         </div>
         <div class="col-lg-12">
-            <div class="card bg-info">
+            <div class="card"  [ngClass]="'bg-'+Q4ResultClass">
                 <div class="d-flex flex-row">
                     <div class="p-2">
                         <h1 class="text-white p-2 mb-0">Q4</h1>
                     </div>
                     <div class="text-white align-self-center p-2">
-                        <div *ngIf="!indicator.Q4">
+                        <div *ngIf="(!indicator.Q4  || isManager) && !isForExport">
                             <form class="mt-0" [formGroup]="Q4fg" (ngSubmit)="saveQ4()">
                                 <div class="input-group mb-0">
-                                    <input type="text" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon1"  formControlName="q4result" placeholder="Resultado">
+                                    <input *ngIf="indicator.Type == 'Cuantitativo'"  type="text" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon1"  formControlName="q4result" placeholder="Resultado">
+                                    
+                                    <select *ngIf="indicator.Type == 'Cualitativo'"  class="custom-select"  formControlName="q4result" >
+                                        <option *ngIf="indicator.Fails" [ngValue]="indicator.Fails">{{indicator.Fails}}</option>    
+                                        <option *ngIf="indicator.Min" [ngValue]="indicator.Min">{{indicator.Min}}</option>    
+                                        <option *ngIf="indicator.Delivers" [ngValue]="indicator.Delivers">{{indicator.Delivers}}</option>    
+                                        <option *ngIf="indicator.Exceeds" [ngValue]="indicator.Exceeds">{{indicator.Exceeds}}</option>    
+                                        <option *ngIf="indicator.Excellent" [ngValue]="indicator.Excellent">{{indicator.Excellent}}</option>    
+                                    </select>
                                     <div class="input-group-append">
                                         <button class="btn btn-success" type="submit" [ngClass]="{'disabled':Q4fg.invalid}"><i class="ti-save"></i></button>
                                     </div>
                                 </div>
                             </form>
                         </div>
-                        <div *ngIf="indicator.Q4">
-                            <h3 class="text-white mb-0">{{indicator.Q4}}<span *ngIf="indicator.Unit=='Percentage'">%</span></h3>
+                        <div *ngIf="(indicator.Q4 && !isManager) || isForExport">
+                            <h4 class="text-white mb-0">{{indicator.Q4}}<span *ngIf="indicator.Unit=='Percentage'">%</span></h4>
                             <span class="text-white">Resultado</span>
                             <div class="progress">
-                                <div class="progress-bar bg-success" role="progressbar" [ngStyle]="{'width': indicator.Q4+'%'}" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                                <div class="progress-bar bg-progress-bar" role="progressbar" [ngStyle]="{'width': indicator.Q4+'%'}" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
                             </div>
                         </div>
                     </div>
@@ -155,10 +200,10 @@
                         </form>
                     </div>
                     <div *ngIf="indicator.Q4">
-                        <h3 class="text-white mb-0">{{indicator.Q4}}</h3>
+                        <h4 class="text-white mb-0">{{indicator.Q4}}</h4>
                         <span class="text-white">Resultado</span>
                         <div class="progress">
-                            <div class="progress-bar bg-success" role="progressbar" [ngStyle]="{'width': indicator.Q4+'%'}" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                            <div class="progress-bar bg-progress-bar" role="progressbar" [ngStyle]="{'width': indicator.Q4+'%'}" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
                         </div>
                     </div>
                 </div>
@@ -174,7 +219,7 @@
                         <h1 class="text-muted p-2 mb-0">Q4</h1>
                     </div>
                     <div class="text-white align-self-center p-2">
-                        <h3 class="mb-0 text-white"></h3>
+                        <h4 class="mb-0 text-white"></h4>
                         <span class="text-muted">{{indicator.Q4}}</span>
                         <div class="progress">
                         <div class="progress-bar bg-cyan" role="progressbar" style="width: 0%; height: 6px;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
